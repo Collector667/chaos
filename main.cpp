@@ -110,7 +110,7 @@ int main() {
     std::vector<Color> col1;
 
     // --- ГРАФИК 2 (Синий градиент, старт сдвинут всего на 0.001) ---
-    State state2(0.100001, 0.0, 0.0);
+    State state2(0.1, 0.0, 0.0);
     std::vector<Vector3> traj2;
     std::vector<Color> col2;
 
@@ -132,61 +132,58 @@ int main() {
         col1.push_back(Color{ 255, 0, 0, 255 }); // От черного к красному
         state1 = euler(state1, dt, CaseI);
 
-        traj2.push_back(Vector3{(float)state2[0], (float)(state2[2] ), (float)state2[1]});
-        float t2 = (float)i / totalSteps;
-        col2.push_back(Color{  0, 200, 255, 255  }); // От черного к красному
-        state2 = euler(state2, dt, CaseI);
+
         // Точки второй системы
-        //        traj2.push_back(Vector3{(float)state2[0], (float)(state2[2] ), (float)state2[1]});
-        //        float t2 = (float)i / totalSteps;
-        //        col2.push_back(Color{ 0, 200, 255, 255 }); // От черного к голубому
-        //        state2 = midPoint(state2, dt, CaseI);
-        //
-        //        // Точки второй системы
-        //        traj3.push_back(Vector3{(float)state3[0], (float)(state3[2] + CFG.offsetZ), (float)state3[1]});
-        //        float t3 = (float)i / totalSteps;
-        //        col3.push_back(Color{ 0, 255, 0, 255 }); // От черного к голубому
-        //        state3 = eulerCromer(state3, dt, CaseI);
-        //
-        //        // Точки второй системы
-        //        traj4.push_back(Vector3{(float)state4[0], (float)(state4[2] + CFG.offsetZ), (float)state4[1]});
-        //        float t4 = (float)i / totalSteps;
-        //        col4.push_back(Color{ 0, 120, 0, 255 }); // От черного к голубому
-        //        state4 = rk4(state4, dt, CaseI);
-        //
-        //            traj5.push_back(Vector3{(float)state5[0], (float)(state5[2] + CFG.offsetZ), (float)state5[1]});
-        //            float t5 = (float)i / totalSteps;
-        //            col5.push_back(Color{ 0, 120, 0, 255 }); // От черного к голубому
-        //            state5 = CD(state5, dt, CaseI, CaseI_);
-        //
+       traj2.push_back(Vector3{(float)state2[0], (float)(state2[2] ), (float)state2[1]});
+       float t2 = (float)i / totalSteps;
+       col2.push_back(Color{ 0, 200, 255, 255 }); // От черного к голубому
+       state2 = midPoint(state2, dt, CaseI);
+
+       // Точки второй системы
+       traj3.push_back(Vector3{(float)state3[0], (float)(state3[2] + CFG.offsetZ), (float)state3[1]});
+       float t3 = (float)i / totalSteps;
+       col3.push_back(Color{ 0, 255, 0, 255 }); // От черного к голубому
+       state3 = eulerCramer(state3, dt, CaseI);
+
+       // Точки второй системы
+       traj4.push_back(Vector3{(float)state4[0], (float)(state4[2] + CFG.offsetZ), (float)state4[1]});
+       float t4 = (float)i / totalSteps;
+       col4.push_back(Color{ 0, 120, 0, 255 }); // От черного к голубому
+       state4 = rk4(state4, dt, CaseI);
+
+       traj5.push_back(Vector3{(float)state5[0], (float)(state5[2] + CFG.offsetZ), (float)state5[1]});
+       float t5 = (float)i / totalSteps;
+       col5.push_back(Color{ 0, 120, 0, 255 }); // От черного к голубому
+       state5 = CD(state5, dt, CaseI, CaseI_);
+
     }
     // Запихиваем оба графика в главный вектор
 //
     allTrajectories.push_back(traj1);
     allTrajectories.push_back(traj2);
-//    allTrajectories.push_back(traj3);
-//    allTrajectories.push_back(traj4);
-//    allTrajectories.push_back(traj5);
+    allTrajectories.push_back(traj3);
+    allTrajectories.push_back(traj4);
+    allTrajectories.push_back(traj5);
 ////
 ////
 ////
     allColors.push_back(col1);
     allColors.push_back(col2);
-//    allColors.push_back(col3);
-//    allColors.push_back(col4);
-//    allColors.push_back(col5);
+    allColors.push_back(col3);
+    allColors.push_back(col4);
+    allColors.push_back(col5);
 
 
     writeTrajectoryCSV(traj1, dt, "Euler", 1);
     writeTrajectoryCSV(traj2, dt, "midPoint", 1);
-    writeTrajectoryCSV(traj3, dt, "Euler Cromer", 1);
+    writeTrajectoryCSV(traj3, dt, "EulerCramer", 1);
     writeTrajectoryCSV(traj4, dt, "rk4", 1);
     writeTrajectoryCSV(traj5, dt, "CD", 1);
 
 
 
     // Вызываем визуализатор для ВСЕХ графиков сразу!
-    VisualizeSystem(allTrajectories, allColors, CFG);
+    // VisualizeSystem(allTrajectories, allColors, CFG);
 
     return 0;
 }

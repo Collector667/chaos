@@ -17,7 +17,7 @@ export inline constexpr auto eulerCromerStep = [](auto dx, auto dy, auto dz,
     z = z + h * dz(x, y, z);
 };
 
-inline constexpr auto eulerCromer = [](const State& s, double dt, auto sys) -> State {
+export inline constexpr auto eulerCramer = [](const State& s, double dt, auto sys) -> State {
     State k1 = sys(s);
     State tempS = s;
 

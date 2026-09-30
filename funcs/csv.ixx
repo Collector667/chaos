@@ -1,20 +1,23 @@
-//
-// Created by Муслихиддин Махмудов on 29.09.2026.
-//
 module;
-#include <fstream>
-#include <ostream>
-#include <string>
-#include <vector>
-#include <filesystem>
-#include "raylib.h"
-export module csv;
 
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <type_traits>
+#include "raylib.h"
+
+#ifndef PROJECT_ROOT_DIR
+#define PROJECT_ROOT_DIR "."
+#endif
+
+export module csv;
 
 export template <typename StateType>
 void writeTrajectoryCSV(const std::vector<StateType>& trajectory, double dt, const std::string& filename, int saveEvery = 1)
 {
-    std::filesystem::path dir("csv");
+    std::filesystem::path dir = std::filesystem::path(PROJECT_ROOT_DIR) / "csv";
     if (!std::filesystem::exists(dir)) {
         std::filesystem::create_directories(dir);
     }

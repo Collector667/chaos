@@ -49,3 +49,6 @@ target_include_directories(untitled PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 6. Линковка библиотек
 target_link_libraries(untitled PRIVATE raylib Eigen)
+target_compile_definitions(untitled PRIVATE
+        PROJECT_ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
