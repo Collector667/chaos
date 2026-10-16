@@ -1,3 +1,5 @@
+#include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <vector>
 #include "raylib.h"

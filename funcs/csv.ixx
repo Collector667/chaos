@@ -1,18 +1,18 @@
 module;
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <filesystem>
 #include <type_traits>
 #include "raylib.h"
 
+export module csv;
+
 #ifndef PROJECT_ROOT_DIR
 #define PROJECT_ROOT_DIR "."
 #endif
-
-export module csv;
 
 export template <typename StateType>
 void writeTrajectoryCSV(const std::vector<StateType>& trajectory, double dt, const std::string& filename, int saveEvery = 1)
