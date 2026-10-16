@@ -5,27 +5,13 @@ module;
 #include <Eigen/Dense>
 export module EulerCramerMethod;
 
-
 using State = Eigen::Vector3d;
 
-
-export inline constexpr auto eulerCromerStep = [](auto dx, auto dy, auto dz,
-                                           double& x, double& y, double& z, double h)
+export inline constexpr auto eulerCramer = [](State& s, double dt, auto dx, auto dy, auto dz) -> State
 {
-    x = x + h * dx(x, y, z);
-    y = y + h * dy(x, y, z);
-    z = z + h * dz(x, y, z);
+    s[0] += dx(s) * dt;
+    s[1] += dy(s) * dt;
+    s[2] += dz(s) * dt;
+
+    return s;
 };
-
-export inline constexpr auto eulerCramer = [](const State& s, double dt, auto sys) -> State {
-    State k1 = sys(s);
-    State tempS = s;
-
-    for (int i = 0; i< s.size(); i++) {
-        k1 = sys(tempS);
-        tempS[i] += k1[i]*dt;
-    }
-    return tempS;
-};
-
-

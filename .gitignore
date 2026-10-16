@@ -5,3 +5,9 @@ csv
 .vs
 data
 out
+.cache
+__pycache__/
+*.pyc
+compile_commands.json
+CMakeUserPresets.json
+.clang-format
