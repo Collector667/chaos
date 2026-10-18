@@ -120,3 +120,89 @@ export int buildBifurcationA(const std::array<double, 6>& coefs_base,
     fout.close();
     return rows;
 }
+
+// Строит бифуркационную диаграмму по двум параметрам:
+// a = coefs[0] и b = coefs[1]. Для каждого узла сетки считает
+// число локальных максимумов x, y, z на установившемся участке.
+// CSV: a,b,nmax_x,nmax_y,nmax_z. Возвращает кол-во строк или -1 при ошибке.
+export int buildBifurcation2D(const std::array<double, 6>& coefs_base,
+                              double a_min, double a_max, size_t Na,
+                              double b_min, double b_max, size_t Nb,
+                              double dt, double T_trans, double T_steady,
+                              const std::string& filename,
+                              auto integrator)
+{
+    // Папка csv
+    std::filesystem::path csv_dir = std::filesystem::current_path() / "csv";
+    if (!std::filesystem::exists(csv_dir))
+        std::filesystem::create_directories(csv_dir);
+
+    // Файл
+    std::ofstream fout(csv_dir / filename);
+    if (!fout.is_open())
+    {
+        std::cerr << "Не удалось открыть " << (csv_dir / filename) << "\n";
+        return -1;
+    }
+
+    fout << "a,b,nmax_x,nmax_y,nmax_z\n";
+    fout << std::setprecision(9) << std::fixed;
+
+    // Копия коэффициентов
+    std::array<double, 6> coefs = coefs_base;
+
+    int rows = 0;
+    double a_step = (a_max - a_min) / (double)(Na - 1);
+    double b_step = (b_max - b_min) / (double)(Nb - 1);
+
+    size_t steps_t = (size_t)std::ceil(T_trans / dt);
+    size_t steps_s = (size_t)std::ceil(T_steady / dt);
+
+    for (size_t ia = 0; ia < Na; ++ia)
+    {
+        double a_cur = a_min + a_step * (double)ia;
+        coefs[0] = a_cur;
+
+        for (size_t ib = 0; ib < Nb; ++ib)
+        {
+            double b_cur = b_min + b_step * (double)ib;
+            coefs[1] = b_cur;
+
+            // Лямбда правой части с текущими a и e
+            auto sys_a = [&](const State& st) -> State
+            { return CaseI_bif(st, coefs, 1.0); };
+
+            // 1) Переходный процесс
+            State s_state{0.1, 0.0, 0.0};
+            for (size_t i = 0; i < steps_t; ++i)
+                s_state = integrator(s_state, dt, sys_a);
+
+            // 2) Установившийся участок: считаем локальные максимумы x,y,z на лету
+            int nx = 0, ny = 0, nz = 0;
+            double px = s_state[0], py = s_state[1], pz = s_state[2]; // prev
+            double cx = px, cy = py, cz = pz;                         // cur
+            for (size_t i = 0; i < steps_s; ++i)
+            {
+                s_state = integrator(s_state, dt, sys_a);
+                double nxx = s_state[0], nyx = s_state[1], nzx = s_state[2]; // nxt
+
+                if (cx > px && cx > nxx) ++nx;
+                if (cy > py && cy > nyx) ++ny;
+                if (cz > pz && cz > nzx) ++nz;
+
+                px = cx; cx = nxx;
+                py = cy; cy = nyx;
+                pz = cz; cz = nzx;
+            }
+
+            fout << a_cur << "," << b_cur << "," << nx << "," << ny << "," << nz << "\n";
+            ++rows;
+        }
+
+        // Прогресс
+        std::cerr << "  a=" << a_cur << " (" << (ia + 1) << "/" << Na << ") rows=" << rows << "\n";
+    }
+
+    fout.close();
+    return rows;
+}
