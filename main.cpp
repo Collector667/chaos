@@ -160,44 +160,85 @@ int main()
     }
 
     // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ПО ДВУМ ПАРАМЕТРАМ (a, b) ============
+    //{
+    //    std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+    //    int n1 = buildBifurcation2D(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,   // a = coefs[0]
+    //         0.5,  1.1, 100,    // b = coefs[1]
+    //        0.01, 500.0, 800.0,
+    //        "bifurcation_2D_rk4.csv",
+    //        rk4
+    //    );
+
+    //    int n2 = buildBifurcation2D(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,
+    //         0.5,  1.1, 100,
+    //        0.01, 500.0, 800.0,
+    //        "bifurcation_2D_midPoint.csv",
+    //        midPoint
+    //    );
+
+    //    int n3 = buildBifurcation2D(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,
+    //         0.5,  1.1, 100,
+    //        0.01, 500.0, 800.0,
+    //        "bifurcation_2D_CD.csv",
+    //        CD
+    //    );
+
+    //    if (n1 < 0 || n2 < 0 || n3 < 0)
+    //    {
+    //        std::cerr << "Ошибка построения 2D бифуркационной диаграммы!\n";
+    //        return 1;
+    //    }
+    //    std::cout << "Bifurcation2D rk4:      " << n1 << " rows\n";
+    //    std::cout << "Bifurcation2D midPoint: " << n2 << " rows\n";
+    //    std::cout << "Bifurcation2D CD:       " << n3 << " rows\n";
+    //}
+
+    // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ОТ a И ШАГА dt ============
     {
         std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
 
-        int n1 = buildBifurcation2D(
+        int n1 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,   // a = coefs[0]
-             0.5,  1.1, 100,    // b = coefs[1]
-            0.01, 500.0, 800.0,
-            "bifurcation_2D_rk4.csv",
+            0.01, 1.0, 100,     // dt
+            500.0, 800.0,       // T_trans, T_steady (единицы времени)
+            "bifurcation_dt_rk4.csv",
             rk4
         );
 
-        int n2 = buildBifurcation2D(
+        int n2 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,
-             0.5,  1.1, 100,
-            0.01, 500.0, 800.0,
-            "bifurcation_2D_midPoint.csv",
+            0.01, 1.0, 100,
+            500.0, 800.0,
+            "bifurcation_dt_midPoint.csv",
             midPoint
         );
 
-        int n3 = buildBifurcation2D(
+        int n3 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,
-             0.5,  1.1, 100,
-            0.01, 500.0, 800.0,
-            "bifurcation_2D_CD.csv",
+            0.01, 1.0, 100,
+            500.0, 800.0,
+            "bifurcation_dt_CD.csv",
             CD
         );
 
         if (n1 < 0 || n2 < 0 || n3 < 0)
         {
-            std::cerr << "Ошибка построения 2D бифуркационной диаграммы!\n";
+            std::cerr << "Ошибка построения бифуркационной диаграммы от a и dt!\n";
             return 1;
         }
-        std::cout << "Bifurcation2D rk4:      " << n1 << " rows\n";
-        std::cout << "Bifurcation2D midPoint: " << n2 << " rows\n";
-        std::cout << "Bifurcation2D CD:       " << n3 << " rows\n";
+        std::cout << "BifurcationDT rk4:      " << n1 << " rows\n";
+        std::cout << "BifurcationDT midPoint: " << n2 << " rows\n";
+        std::cout << "BifurcationDT CD:       " << n3 << " rows\n";
     }
 
     // ===================== 3D-ВИЗУАЛИЗАЦИЯ =====================
