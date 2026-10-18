@@ -14,6 +14,7 @@ import MidPointMethod;
 import RungeKuttaMethods;
 import csv;
 import chaosRisuyka;
+import bifurcation;
 
 // template <typename SystemFunction>
 
@@ -107,7 +108,58 @@ inline auto CaseI_ = [](const State& s) -> State
 
 int main()
 {
+    // ===================== БИФУРКАЦИОННАЯ ДИАГРАММА ПО a =====================
+    {
+        // Коэффициенты Sprott Case I (как у CaseI в main.cpp)
+        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
 
+        int n1 = buildBifurcationA(
+            coefs_base,
+            -0.5,    // a_min
+            -0.15,   // a_max (система расходится при a > -0.14)
+            900,     // Na
+            0.01,    // dt
+            900.0,   // T_trans
+            1400.0,  // T_steady
+            "bifurcation_a_rk4.csv",
+            rk4
+        );
+
+        int n2 = buildBifurcationA(
+            coefs_base,
+            -0.5,
+            -0.15,
+            900,
+            0.01,
+            900.0,
+            1400.0,
+            "bifurcation_a_midPoint.csv",
+            midPoint
+        );
+
+        int n3 = buildBifurcationA(
+            coefs_base,
+            -0.5,
+            -0.15,
+            900,
+            0.01,
+            900.0,
+            1400.0,
+            "bifurcation_a_CD.csv",
+            CD
+        );
+
+        if (n1 < 0 || n2 < 0 || n3 < 0)
+        {
+            std::cerr << "Ошибка построения бифуркационной диаграммы!\n";
+            return 1;
+        }
+        std::cout << "Bifurcation rk4:      " << n1 << " rows\n";
+        std::cout << "Bifurcation midPoint: " << n2 << " rows\n";
+        std::cout << "Bifurcation CD:       " << n3 << " rows\n";
+    }
+
+    // ===================== 3D-ВИЗУАЛИЗАЦИЯ =====================
     AppConfig CFG;
     //    CFG.offsetZ = -25.0f; // Центруем аттрактор по высоте
 
@@ -171,7 +223,7 @@ int main()
             Vector3{(float)state5[0], (float)(state5[2] + CFG.offsetZ), (float)state5[1]});
         float t5 = (float)i / totalSteps;
         col5.push_back(Color{0, 120, 0, 255}); // От черного к голубому
-        state5 = CD(state5, dt, CaseIdx, CaseIdy, CaseIdz);
+        state5 = CD(state5, dt, CaseI);
     }
     // Запихиваем оба графика в главный вектор
     //

@@ -9,15 +9,18 @@ export module CDMethod;
 
 using State = Eigen::Vector3d;
 
-export inline constexpr auto CD = [](State& s, double dt, auto dx, auto dy, auto dz) -> State
+export inline constexpr auto CD = [](const State& s, double dt, auto sys) -> State
 {
-    s[0] += dx(s) * dt * 0.5;
-    s[1] += dy(s) * dt * 0.5;
-    s[2] += dz(s) * dt * 0.5;
+    State cur = s;
+    auto dx = [&](const State& p) { return sys(p)[0]; };
+    auto dy = [&](const State& p) { return sys(p)[1]; };
+    auto dz = [&](const State& p) { return sys(p)[2]; };
 
-    s[2] += dz(s) * dt * 0.5;
-    s[1] += dy(s) * dt * 0.5;
-    s[0] += dx(s) * dt * 0.5;
-
-    return s;
+    cur[0] += dx(cur) * dt * 0.5;
+    cur[1] += dy(cur) * dt * 0.5;
+    cur[2] += dz(cur) * dt * 0.5;
+    cur[2] += dz(cur) * dt * 0.5;
+    cur[1] += dy(cur) * dt * 0.5;
+    cur[0] += dx(cur) * dt * 0.5;
+    return cur;
 };

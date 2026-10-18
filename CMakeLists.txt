@@ -54,6 +54,7 @@ target_sources(untitled
         methods/RungeKuttaMethods.ixx
         funcs/csv.ixx
         funcs/chaosRisuyka.ixx
+        funcs/bifurcation.ixx
 )
 
 # 5. Пути к заголовкам самого проекта
