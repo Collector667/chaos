@@ -7,11 +7,18 @@ export module EulerCramerMethod;
 
 using State = Eigen::Vector3d;
 
-export inline constexpr auto eulerCramer = [](State& s, double dt, auto dx, auto dy, auto dz) -> State
-{
-    s[0] += dx(s) * dt;
-    s[1] += dy(s) * dt;
-    s[2] += dz(s) * dt;
+export inline constexpr auto eulerCramer = [](
+    const State& s, double dt, auto sys
+    ) -> State 
+    {
+        State cur = s;
+        auto dx = [&](const State& p) { return sys(p)[0]; };
+        auto dy = [&](const State& p) { return sys(p)[1]; };
+        auto dz = [&](const State& p) { return sys(p)[2]; };
 
-    return s;
-};
+        cur[0] += dx(cur) * dt;
+        cur[1] += dy(cur) * dt;
+        cur[2] += dz(cur) * dt;
+
+        return cur;
+    };

@@ -19,11 +19,11 @@ variables = [("xmax", "Xmax", r"$x_{max}$"),
 
 for fname, label, color in methods:
     df = pd.read_csv(BASE_DIR / "csv" / fname, na_values=[""])
-    print(f"{label}: {len(df)} строк, a from {df['a'].min():.3f} to {df['a'].max():.3f}")
+    print(f"{label}: {len(df)} строк, a from {df['p1'].min():.3f} to {df['p1'].max():.3f}")
 
     for var, name, ylabel in variables:
         plt.figure(figsize=(10, 6))
-        plt.plot(df["a"], df[var], c=color, marker=".", linestyle="none", markersize=0.5)
+        plt.plot(df["p1"], df[var], c=color, marker=".", linestyle="none", markersize=0.5)
         plt.xlabel("Ось a")
         plt.ylabel(ylabel)
         plt.title(f"Бифуркационная диаграмма по {var[0]} ({label})")

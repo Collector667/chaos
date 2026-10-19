@@ -54,6 +54,7 @@ target_sources(untitled
         methods/RungeKuttaMethods.ixx
         funcs/csv.ixx
         funcs/chaosRisuyka.ixx
+        funcs/system.ixx
         funcs/bifurcation.ixx
 )
 

@@ -15,42 +15,8 @@ import RungeKuttaMethods;
 import csv;
 import chaosRisuyka;
 import bifurcation;
+import system;
 
-// template <typename SystemFunction>
-
-// int main()
-//{
-//
-//      Params p;
-//
-//      auto dx = [&p](double x, double y, double z) { return p.a * y * p.scale; };
-//      auto dy = [&p](double x, double y, double z) { return (p.b * x + p.c * z) * p.scale; };
-//      auto dz = [&p](double x, double y, double z) { return (p.d * x + p.e * y * y + p.f * z) * p.scale; };
-//
-//      double x0 = 0.0, y0 = 0.1, z0 = 0.0;
-//      const double h = 1e-6;
-//      const double timeEnd = 20.0;
-//      const int saveEvery = 1000;
-//
-//      solve(eulerStep, dx, dy, dz, x0, y0, z0, h, timeEnd, saveEvery, "csv/euler.csv");
-//      // solve(midPointStep, dx, dy, dz, x0, y0, z0, h, timeEnd, saveEvery, "csv/midPoint.csv");
-//      solve(eulerCromerStep, dx, dy, dz, x0, y0, z0, h, timeEnd, saveEvery, "csv/eulerCromer.csv");
-// }
-
-struct Params
-{
-    double a = -0.2;
-    double b = 1.0;
-    double c = 1.0;
-    double d = 1.0;
-    double e = 1.0;
-    double f = -1.0;
-    double scale = 1e0;
-};
-
-using State = Eigen::Vector3d;
-
-Params p;
 
 // =====================================================================
 // ПРИМЕР ИСПОЛЬЗОВАНИЯ В MAIN (Генерация двух систем)
@@ -65,46 +31,6 @@ State lorenz(const State& s)
     return ds;
 }
 
-inline auto CaseI = [](const State& s,
-                       std::array<double, 6> coefs = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0},
-                       double scale = 1.0) -> State
-{
-    return State{
-        coefs[0] * s[1],
-        coefs[1] * s[0] + coefs[2] * s[2],
-        coefs[3] * s[0] + coefs[4] * s[1] * s[1] + coefs[5] * s[2]
-    } * scale;
-};
-
-inline auto CaseIdx = [](const State& s,
-                          std::array<double, 6> coefs = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0},
-                          double scale = 1.0) -> double
-{
-    return coefs[0] * s[1] * scale;
-};
-
-inline auto CaseIdy = [](const State& s,
-                          std::array<double, 6> coefs = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0},
-                          double scale = 1.0) -> double
-{
-    return (coefs[1] * s[0] + coefs[2] * s[2]) * scale;
-};
-
-inline auto CaseIdz = [](const State& s,
-                          std::array<double, 6> coefs = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0},
-                          double scale = 1.0) -> double
-{
-    return (coefs[3] * s[0] + coefs[4] * s[1] * s[1] + coefs[5] * s[2]) * scale;
-};
-
-inline auto CaseI_ = [](const State& s) -> State
-{
-    return State{
-        p.a * s[1], 
-        p.b * s[0] + p.c * s[2],
-        (p.d * s[0] + p.e * s[1] * s[1] - p.f * s[2]) * 0.5
-    } * p.scale;
-};
 
 int main()
 {
@@ -160,45 +86,48 @@ int main()
     }
 
     // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ПО ДВУМ ПАРАМЕТРАМ (a, b) ============
-    //{
-    //    std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+    {
+        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
 
-    //    int n1 = buildBifurcation2D(
-    //        coefs_base,
-    //        -0.5, -0.15, 100,   // a = coefs[0]
-    //         0.5,  1.1, 100,    // b = coefs[1]
-    //        0.01, 500.0, 800.0,
-    //        "bifurcation_2D_rk4.csv",
-    //        rk4
-    //    );
+        int n1 = buildBifurcation2D(
+            coefs_base,
+            0, -0.5, -0.15, 100,   // p1: a = coefs[0]
+            1,  0.5,  1.3,  100,   // p2: b = coefs[1]
+            0.01, 500.0, 800.0,    // dt, T_trans, T_steady
+            0.01,                  // delta (точность уникальных максимумов)
+            "bifurcation_2D_ab_rk4.csv",
+            rk4
+        );
 
-    //    int n2 = buildBifurcation2D(
-    //        coefs_base,
-    //        -0.5, -0.15, 100,
-    //         0.5,  1.1, 100,
-    //        0.01, 500.0, 800.0,
-    //        "bifurcation_2D_midPoint.csv",
-    //        midPoint
-    //    );
+        int n2 = buildBifurcation2D(
+            coefs_base,
+            0, -0.5, -0.15, 100,
+            1,  0.5,  1.3,  100,
+            0.01, 500.0, 800.0,
+            0.01,
+            "bifurcation_2D_ab_midPoint.csv",
+            midPoint
+        );
 
-    //    int n3 = buildBifurcation2D(
-    //        coefs_base,
-    //        -0.5, -0.15, 100,
-    //         0.5,  1.1, 100,
-    //        0.01, 500.0, 800.0,
-    //        "bifurcation_2D_CD.csv",
-    //        CD
-    //    );
+        int n3 = buildBifurcation2D(
+            coefs_base,
+            0, -0.5, -0.15, 100,
+            1,  0.5,  1.3,  100,
+            0.01, 500.0, 800.0,
+            0.01,
+            "bifurcation_2D_ab_CD.csv",
+            CD
+        );
 
-    //    if (n1 < 0 || n2 < 0 || n3 < 0)
-    //    {
-    //        std::cerr << "Ошибка построения 2D бифуркационной диаграммы!\n";
-    //        return 1;
-    //    }
-    //    std::cout << "Bifurcation2D rk4:      " << n1 << " rows\n";
-    //    std::cout << "Bifurcation2D midPoint: " << n2 << " rows\n";
-    //    std::cout << "Bifurcation2D CD:       " << n3 << " rows\n";
-    //}
+        if (n1 < 0 || n2 < 0 || n3 < 0)
+        {
+            std::cerr << "Ошибка построения 2D (a,b) диаграммы!\n";
+            return 1;
+        }
+        std::cout << "Bifurcation2D(a,b) rk4:      " << n1 << " rows\n";
+        std::cout << "Bifurcation2D(a,b) midPoint: " << n2 << " rows\n";
+        std::cout << "Bifurcation2D(a,b) CD:       " << n3 << " rows\n";
+    }
 
     // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ОТ a И ШАГА dt ============
     {
@@ -207,8 +136,9 @@ int main()
         int n1 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,   // a = coefs[0]
-            0.01, 1.0, 100,     // dt
+             0.01, 1.0, 100,    // dt
             500.0, 800.0,       // T_trans, T_steady (единицы времени)
+            0.01,               // delta (точность уникальных максимумов)
             "bifurcation_dt_rk4.csv",
             rk4
         );
@@ -216,8 +146,9 @@ int main()
         int n2 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,
-            0.01, 1.0, 100,
+             0.01, 1.0, 100,
             500.0, 800.0,
+            0.01,
             "bifurcation_dt_midPoint.csv",
             midPoint
         );
@@ -225,8 +156,9 @@ int main()
         int n3 = buildBifurcationA_dt(
             coefs_base,
             -0.5, -0.15, 100,
-            0.01, 1.0, 100,
+             0.01, 1.0, 100,
             500.0, 800.0,
+            0.01,
             "bifurcation_dt_CD.csv",
             CD
         );
@@ -247,6 +179,9 @@ int main()
 
     int totalSteps = 200000;
     double dt = 0.01;
+
+    // Система Case I с коэффициентами (нужна методам, которым требуются параметры, напр. CD)
+    const CaseISystem sys_caseI{};
 
     // Векторы для хранения всех наших графиков
     std::vector<std::vector<Vector3>> allTrajectories;
@@ -279,33 +214,33 @@ int main()
         traj1.push_back(Vector3{(float)state1[0], (float)(state1[2]), (float)state1[1]});
         float t1 = (float)i / totalSteps;
         col1.push_back(Color{255, 0, 0, 255}); // От черного к красному
-        state1 = euler(state1, dt, CaseI);
+        state1 = euler(state1, dt, sys_caseI);
 
         // Точки второй системы
         traj2.push_back(Vector3{(float)state2[0], (float)(state2[2]), (float)state2[1]});
         float t2 = (float)i / totalSteps;
         col2.push_back(Color{0, 200, 255, 255}); // От черного к голубому
-        state2 = midPoint(state2, dt, CaseI);
+        state2 = midPoint(state2, dt, sys_caseI);
 
         // Точки второй системы
         traj3.push_back(
             Vector3{(float)state3[0], (float)(state3[2] + CFG.offsetZ), (float)state3[1]});
         float t3 = (float)i / totalSteps;
         col3.push_back(Color{0, 255, 0, 255}); // От черного к голубому
-        state3 = eulerCramer(state3, dt, CaseIdx, CaseIdy, CaseIdz);
+        state3 = eulerCramer(state3, dt, sys_caseI);
 
         // Точки второй системы
         traj4.push_back(
             Vector3{(float)state4[0], (float)(state4[2] + CFG.offsetZ), (float)state4[1]});
         float t4 = (float)i / totalSteps;
         col4.push_back(Color{0, 120, 0, 255}); // От черного к голубому
-        state4 = rk4(state4, dt, CaseI);
+        state4 = rk4(state4, dt, sys_caseI);
 
         traj5.push_back(
             Vector3{(float)state5[0], (float)(state5[2] + CFG.offsetZ), (float)state5[1]});
         float t5 = (float)i / totalSteps;
         col5.push_back(Color{0, 120, 0, 255}); // От черного к голубому
-        state5 = CD(state5, dt, CaseI);
+        state5 = CD(state5, dt, sys_caseI);
     }
     // Запихиваем оба графика в главный вектор
     //
