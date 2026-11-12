@@ -19,13 +19,6 @@ import system;
 
 // --- Вспомогательные средства (не экспортируются: видны только внутри модуля) ---
 
-// Признак ухода траектории в бесконечность.
-bool isDiverged(const State& st)
-{
-    return !std::isfinite(st[0]) || !std::isfinite(st[1]) || !std::isfinite(st[2]) ||
-           std::fabs(st[0]) > 1e6 || std::fabs(st[1]) > 1e6 || std::fabs(st[2]) > 1e6;
-}
-
 // Результат обсчёта одного узла сетки.
 struct NodeResult
 {

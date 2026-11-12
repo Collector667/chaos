@@ -15,6 +15,7 @@ import RungeKuttaMethods;
 import csv;
 import chaosRisuyka;
 import bifurcation;
+import lyapunov;
 import system;
 
 
@@ -34,145 +35,6 @@ State lorenz(const State& s)
 
 int main()
 {
-    // ===================== БИФУРКАЦИОННАЯ ДИАГРАММА ПО a =====================
-    {
-        // Коэффициенты Sprott Case I (как у CaseI в main.cpp)
-        //std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
-
-        //int n1 = buildBifurcationA(
-        //    coefs_base,
-        //    -0.5,    // a_min
-        //    -0.15,   // a_max (система расходится при a > -0.14)
-        //    900,     // Na
-        //    0.01,    // dt
-        //    900.0,   // T_trans
-        //    1400.0,  // T_steady
-        //    "bifurcation_a_rk4.csv",
-        //    rk4
-        //);
-
-        //int n2 = buildBifurcationA(
-        //    coefs_base,
-        //    -0.5,
-        //    -0.15,
-        //    900,
-        //    0.01,
-        //    900.0,
-        //    1400.0,
-        //    "bifurcation_a_midPoint.csv",
-        //    midPoint
-        //);
-
-        //int n3 = buildBifurcationA(
-        //    coefs_base,
-        //    -0.5,
-        //    -0.15,
-        //    900,
-        //    0.01,
-        //    900.0,
-        //    1400.0,
-        //    "bifurcation_a_CD.csv",
-        //    CD
-        //);
-
-        //if (n1 < 0 || n2 < 0 || n3 < 0)
-        //{
-        //    std::cerr << "Ошибка построения бифуркационной диаграммы!\n";
-        //    return 1;
-        //}
-        //std::cout << "Bifurcation rk4:      " << n1 << " rows\n";
-        //std::cout << "Bifurcation midPoint: " << n2 << " rows\n";
-        //std::cout << "Bifurcation CD:       " << n3 << " rows\n";
-    }
-
-    // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ПО ДВУМ ПАРАМЕТРАМ (a, b) ============
-    {
-        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
-
-        int n1 = buildBifurcation2D(
-            coefs_base,
-            0, -0.5, -0.15, 100,   // p1: a = coefs[0]
-            1,  0.5,  1.3,  100,   // p2: b = coefs[1]
-            0.01, 500.0, 800.0,    // dt, T_trans, T_steady
-            0.01,                  // delta (точность уникальных максимумов)
-            "bifurcation_2D_ab_rk4.csv",
-            rk4
-        );
-
-        int n2 = buildBifurcation2D(
-            coefs_base,
-            0, -0.5, -0.15, 100,
-            1,  0.5,  1.3,  100,
-            0.01, 500.0, 800.0,
-            0.01,
-            "bifurcation_2D_ab_midPoint.csv",
-            midPoint
-        );
-
-        int n3 = buildBifurcation2D(
-            coefs_base,
-            0, -0.5, -0.15, 100,
-            1,  0.5,  1.3,  100,
-            0.01, 500.0, 800.0,
-            0.01,
-            "bifurcation_2D_ab_CD.csv",
-            CD
-        );
-
-        if (n1 < 0 || n2 < 0 || n3 < 0)
-        {
-            std::cerr << "Ошибка построения 2D (a,b) диаграммы!\n";
-            return 1;
-        }
-        std::cout << "Bifurcation2D(a,b) rk4:      " << n1 << " rows\n";
-        std::cout << "Bifurcation2D(a,b) midPoint: " << n2 << " rows\n";
-        std::cout << "Bifurcation2D(a,b) CD:       " << n3 << " rows\n";
-    }
-
-    // ============ БИФУРКАЦИОННАЯ ДИАГРАММА ОТ a И ШАГА dt ============
-    {
-        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
-
-        int n1 = buildBifurcationA_dt(
-            coefs_base,
-            -0.5, -0.15, 100,   // a = coefs[0]
-             0.01, 1.0, 100,    // dt
-            500.0, 800.0,       // T_trans, T_steady (единицы времени)
-            0.01,               // delta (точность уникальных максимумов)
-            "bifurcation_dt_rk4.csv",
-            rk4
-        );
-
-        int n2 = buildBifurcationA_dt(
-            coefs_base,
-            -0.5, -0.15, 100,
-             0.01, 1.0, 100,
-            500.0, 800.0,
-            0.01,
-            "bifurcation_dt_midPoint.csv",
-            midPoint
-        );
-
-        int n3 = buildBifurcationA_dt(
-            coefs_base,
-            -0.5, -0.15, 100,
-             0.01, 1.0, 100,
-            500.0, 800.0,
-            0.01,
-            "bifurcation_dt_CD.csv",
-            CD
-        );
-
-        if (n1 < 0 || n2 < 0 || n3 < 0)
-        {
-            std::cerr << "Ошибка построения бифуркационной диаграммы от a и dt!\n";
-            return 1;
-        }
-        std::cout << "BifurcationDT rk4:      " << n1 << " rows\n";
-        std::cout << "BifurcationDT midPoint: " << n2 << " rows\n";
-        std::cout << "BifurcationDT CD:       " << n3 << " rows\n";
-    }
-
     // ===================== 3D-ВИЗУАЛИЗАЦИЯ =====================
     AppConfig CFG;
     //    CFG.offsetZ = -25.0f; // Центруем аттрактор по высоте
@@ -182,6 +44,98 @@ int main()
 
     // Система Case I с коэффициентами (нужна методам, которым требуются параметры, напр. CD)
     const CaseISystem sys_caseI{};
+
+    // ============ СТАРШИЙ ПОКАЗАТЕЛЬ ЛЯПУНОВА ПО a ============
+    {
+        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+        auto runLyapA = [&](const char* method, const char* file, auto integrator) -> bool
+        {
+            const int nl = buildLyapunovA(
+                coefs_base,
+                -0.5, -0.15, 400,   // a_min, a_max, Na
+                0.01,               // dt
+                4000.0,             // T_trans (сходимость к аттрактору медленная)
+                2000.0,             // T_meas (N = 200 000 шагов)
+                1e-8,               // d0
+                file,
+                integrator
+            );
+
+            if (nl < 0)
+            {
+                std::cerr << "Ошибка расчёта показателя Ляпунова (" << method << ")!\n";
+                return false;
+            }
+            std::cout << "Lyapunov a " << method << ": " << nl << " rows\n";
+            return true;
+        };
+
+        if (!runLyapA("rk4", "lyapunov_a_rk4.csv", rk4)) return 1;
+        if (!runLyapA("midPoint", "lyapunov_a_midPoint.csv", midPoint)) return 1;
+        if (!runLyapA("CD", "lyapunov_a_CD.csv", CD)) return 1;
+    }
+
+    // ============ СТАРШИЙ ПОКАЗАТЕЛЬ ЛЯПУНОВА ПО (a, b) ============
+    {
+        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+        auto runLyapAB = [&](const char* method, const char* file, auto integrator) -> bool
+        {
+            const int n = buildLyapunov2D(
+                coefs_base,
+                0, -0.5, -0.15, 100,   // p1: a = coefs[0]
+                1,  0.5,  1.3,  100,   // p2: b = coefs[1]
+                0.01, 4000.0, 2000.0, 1e-8,
+                file,
+                integrator
+            );
+
+            if (n < 0)
+            {
+                std::cerr << "Ошибка расчёта Ляпунова (a,b), " << method << "!\n";
+                return false;
+            }
+            std::cout << "Lyapunov ab " << method << ": " << n << " rows\n";
+            return true;
+        };
+
+        if (!runLyapAB("rk4", "lyapunov_2D_ab_rk4.csv", rk4)) return 1;
+        if (!runLyapAB("midPoint", "lyapunov_2D_ab_midPoint.csv", midPoint)) return 1;
+        if (!runLyapAB("CD", "lyapunov_2D_ab_CD.csv", CD)) return 1;
+    }
+
+    // ============ СТАРШИЙ ПОКАЗАТЕЛЬ ЛЯПУНОВА ПО (a, dt) ============
+    {
+        std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+        auto runLyapAdt = [&](const char* method, const char* file, auto integrator) -> bool
+        {
+            const int n = buildLyapunovA_dt(
+                coefs_base,
+                -0.5, -0.15, 100,   // a = coefs[0]
+                0.01, 1.0, 100,     // dt
+                4000.0, 2000.0,     // T_trans, T_meas (единицы времени)
+                1e-8,               // d0
+                file,
+                integrator
+            );
+
+            if (n < 0)
+            {
+                std::cerr << "Ошибка расчёта Ляпунова (a,dt), " << method << "!\n";
+                return false;
+            }
+            std::cout << "Lyapunov adt " << method << ": " << n << " rows\n";
+            return true;
+        };
+
+        if (!runLyapAdt("rk4", "lyapunov_dt_rk4.csv", rk4)) return 1;
+        if (!runLyapAdt("midPoint", "lyapunov_dt_midPoint.csv", midPoint)) return 1;
+        if (!runLyapAdt("CD", "lyapunov_dt_CD.csv", CD)) return 1;
+    }
+
+    std::cout << "LYAPUNOV DONE" << std::endl;
 
     // Векторы для хранения всех наших графиков
     std::vector<std::vector<Vector3>> allTrajectories;
@@ -266,6 +220,160 @@ int main()
 
     // Вызываем визуализатор для ВСЕХ графиков сразу!
     VisualizeSystem(allTrajectories, allColors, CFG);
+
+    //std::cout << "bif 1d" << "\n";
+
+    //// ===================== БИФУРКАЦИОННАЯ ДИАГРАММА ПО a =====================
+    //{
+    //     //Коэффициенты Sprott Case I (как у CaseI в main.cpp)
+    //    std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+    //    std::cout << "bif 1d rk4" << "\n";
+
+    //    int n1 = buildBifurcationA(
+    //        coefs_base,
+    //        -0.5,    // a_min
+    //        -0.15,   // a_max (система расходится при a > -0.14)
+    //        900,     // Na
+    //        0.01,    // dt
+    //        900.0,   // T_trans
+    //        1400.0,  // T_steady
+    //        "bifurcation_a_rk4.csv",
+    //        rk4
+    //    );
+    //    std::cout << "bif 1d mp" << "\n";
+
+    //    int n2 = buildBifurcationA(
+    //        coefs_base,
+    //        -0.5,
+    //        -0.15,
+    //        900,
+    //        0.01,
+    //        900.0,
+    //        1400.0,
+    //        "bifurcation_a_midPoint.csv",
+    //        midPoint
+    //    );
+
+    //    std::cout << "bif 1d cd" << "\n";
+
+    //    int n3 = buildBifurcationA(
+    //        coefs_base,
+    //        -0.5,
+    //        -0.15,
+    //        900,
+    //        0.01,
+    //        900.0,
+    //        1400.0,
+    //        "bifurcation_a_CD.csv",
+    //        CD
+    //    );
+
+    //    if (n1 < 0 || n2 < 0 || n3 < 0)
+    //    {
+    //        std::cerr << "Ошибка построения бифуркационной диаграммы!\n";
+    //        return 1;
+    //    }
+    //    std::cout << "Bifurcation rk4:      " << n1 << " rows\n";
+    //    std::cout << "Bifurcation midPoint: " << n2 << " rows\n";
+    //    std::cout << "Bifurcation CD:       " << n3 << " rows\n";
+    //}
+
+    //std::cout << "bif 2d" << "\n";
+
+    //// ============ БИФУРКАЦИОННАЯ ДИАГРАММА ПО ДВУМ ПАРАМЕТРАМ (a, b) ============
+    //{
+    //    std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+    //    std::cout << "bif 2d rk4" << "\n";
+
+    //    int n1 = buildBifurcation2D(
+    //        coefs_base,
+    //        0, -0.5, -0.15, 100,   // p1: a = coefs[0]
+    //        1,  0.5,  1.3,  100,   // p2: b = coefs[1]
+    //        0.01, 500.0, 800.0,    // dt, T_trans, T_steady
+    //        0.02,                  // delta (точность уникальных максимумов)
+    //        "bifurcation_2D_ab_rk4.csv",
+    //        rk4
+    //    );
+
+    //    std::cout << "bif 2d mp" << "\n";
+
+    //    int n2 = buildBifurcation2D(
+    //        coefs_base,
+    //        0, -0.5, -0.15, 100,
+    //        1,  0.5,  1.3,  100,
+    //        0.01, 500.0, 800.0,
+    //        0.02,
+    //        "bifurcation_2D_ab_midPoint.csv",
+    //        midPoint
+    //    );
+
+    //    std::cout << "bif 2d cd" << "\n";
+
+    //    int n3 = buildBifurcation2D(
+    //        coefs_base,
+    //        0, -0.5, -0.15, 100,
+    //        1,  0.5,  1.3,  100,
+    //        0.01, 500.0, 800.0,
+    //        0.02,
+    //        "bifurcation_2D_ab_CD.csv",
+    //        CD
+    //    );
+
+    //    if (n1 < 0 || n2 < 0 || n3 < 0)
+    //    {
+    //        std::cerr << "Ошибка построения 2D (a,b) диаграммы!\n";
+    //        return 1;
+    //    }
+    //    std::cout << "Bifurcation2D(a,b) rk4:      " << n1 << " rows\n";
+    //    std::cout << "Bifurcation2D(a,b) midPoint: " << n2 << " rows\n";
+    //    std::cout << "Bifurcation2D(a,b) CD:       " << n3 << " rows\n";
+    //}
+
+    //// ============ БИФУРКАЦИОННАЯ ДИАГРАММА ОТ a И ШАГА dt ============
+    //{
+    //    std::array<double, 6> coefs_base = {-0.2, 1.0, 1.0, 1.0, 1.0, -1.0};
+
+    //    int n1 = buildBifurcationA_dt(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,   // a = coefs[0]
+    //         0.01, 1.0, 100,    // dt
+    //        500.0, 800.0,       // T_trans, T_steady (единицы времени)
+    //        0.02,               // delta (точность уникальных максимумов)
+    //        "bifurcation_dt_rk4.csv",
+    //        rk4
+    //    );
+
+    //    int n2 = buildBifurcationA_dt(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,
+    //         0.01, 1.0, 100,
+    //        500.0, 800.0,
+    //        0.02,
+    //        "bifurcation_dt_midPoint.csv",
+    //        midPoint
+    //    );
+
+    //    int n3 = buildBifurcationA_dt(
+    //        coefs_base,
+    //        -0.5, -0.15, 100,
+    //         0.01, 1.0, 100,
+    //        500.0, 800.0,
+    //        0.02,
+    //        "bifurcation_dt_CD.csv",
+    //        CD
+    //    );
+
+    //    if (n1 < 0 || n2 < 0 || n3 < 0)
+    //    {
+    //        std::cerr << "Ошибка построения бифуркационной диаграммы от a и dt!\n";
+    //        return 1;
+    //    }
+    //    std::cout << "BifurcationDT rk4:      " << n1 << " rows\n";
+    //    std::cout << "BifurcationDT midPoint: " << n2 << " rows\n";
+    //    std::cout << "BifurcationDT CD:       " << n3 << " rows\n";
+    //}
 
     return 0;
 }

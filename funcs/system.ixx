@@ -10,6 +10,13 @@ export module system;
 // Тип состояния системы (общий для всех модулей проекта)
 export using State = Eigen::Vector3d;
 
+// Признак ухода траектории в бесконечность (общий для всех модулей).
+export bool isDiverged(const State& st)
+{
+    return !std::isfinite(st[0]) || !std::isfinite(st[1]) || !std::isfinite(st[2]) ||
+           std::fabs(st[0]) > 1e6 || std::fabs(st[1]) > 1e6 || std::fabs(st[2]) > 1e6;
+}
+
 // Sprott Case I:
 //   dx/dt = a*y
 //   dy/dt = b*x + c*z
